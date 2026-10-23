@@ -44,7 +44,8 @@ public final class NebulaSettingsProvider extends ContentProvider {
     public Bundle call(String method, String arg, Bundle extras) {
         if ("get_schema".equals(method)) return result(schema());
         NebulaPreferences preferences = new NebulaPreferences(getContext());
-        if ("get_settings".equals(method)) return result(settings(preferences.read()));
+        if ("get_settings".equals(method))
+            return result(settings(preferences.read(), preferences.showClock()));
         if ("set_random_all".equals(method)) {
             NebulaOptions old = preferences.read();
             preferences.write(
@@ -58,7 +59,7 @@ public final class NebulaSettingsProvider extends ContentProvider {
                             old.twinkle,
                             old.meteors,
                             255));
-            return result(settings(preferences.read()));
+            return result(settings(preferences.read(), preferences.showClock()));
         }
         if ("set_random_none".equals(method)) {
             NebulaOptions old = preferences.read();
@@ -73,14 +74,14 @@ public final class NebulaSettingsProvider extends ContentProvider {
                             old.twinkle,
                             old.meteors,
                             0));
-            return result(settings(preferences.read()));
+            return result(settings(preferences.read(), preferences.showClock()));
         }
         if ("set_setting".equals(method)) {
             if (extras == null || !extras.containsKey("value"))
                 throw new IllegalArgumentException("Missing setting value.");
             try {
                 preferences.set(arg, extras.getString("value"));
-                return result(settings(preferences.read()));
+                return result(settings(preferences.read(), preferences.showClock()));
             } catch (IllegalArgumentException error) {
                 throw error;
             }
@@ -104,6 +105,9 @@ public final class NebulaSettingsProvider extends ContentProvider {
         appendInteger(fields, "brightness", "3");
         appendBoolean(fields, "twinkle", "true");
         appendBoolean(fields, "meteors", "true");
+        comma(fields);
+        fields.append(
+                "{\"key\":\"show_clock\",\"type\":\"boolean\",\"default\":false,\"random\":false}");
         return "{\"schemaVersion\":1,\"provider\":\""
                 + AUTHORITY
                 + "\",\"fields\":["
@@ -152,24 +156,26 @@ public final class NebulaSettingsProvider extends ContentProvider {
         return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
     }
 
-    static String settings(NebulaOptions options) {
-        return "{\"schemaVersion\":1,\"palette\":"
-                + quoted(value(options, 1, NebulaOptions.PALETTES[options.palette]))
-                + ",\"form\":"
-                + quoted(value(options, 2, NebulaOptions.FORMS[options.form]))
-                + ",\"speed\":"
-                + quoted(value(options, 4, Integer.toString(options.speed)))
-                + ",\"density\":"
-                + quoted(value(options, 8, Integer.toString(options.density)))
-                + ",\"stars\":"
-                + quoted(value(options, 16, Integer.toString(options.stars)))
-                + ",\"brightness\":"
-                + quoted(value(options, 32, Integer.toString(options.brightness)))
-                + ",\"twinkle\":"
-                + quoted(value(options, 64, Boolean.toString(options.twinkle)))
-                + ",\"meteors\":"
-                + quoted(value(options, 128, Boolean.toString(options.meteors)))
-                + "}";
+    static String settings(NebulaOptions options, boolean showClock) {
+        String scene =
+                "{\"schemaVersion\":1,\"palette\":"
+                        + quoted(value(options, 1, NebulaOptions.PALETTES[options.palette]))
+                        + ",\"form\":"
+                        + quoted(value(options, 2, NebulaOptions.FORMS[options.form]))
+                        + ",\"speed\":"
+                        + quoted(value(options, 4, Integer.toString(options.speed)))
+                        + ",\"density\":"
+                        + quoted(value(options, 8, Integer.toString(options.density)))
+                        + ",\"stars\":"
+                        + quoted(value(options, 16, Integer.toString(options.stars)))
+                        + ",\"brightness\":"
+                        + quoted(value(options, 32, Integer.toString(options.brightness)))
+                        + ",\"twinkle\":"
+                        + quoted(value(options, 64, Boolean.toString(options.twinkle)))
+                        + ",\"meteors\":"
+                        + quoted(value(options, 128, Boolean.toString(options.meteors)))
+                        + "}";
+        return scene.substring(0, scene.length() - 1) + ",\"show_clock\":" + showClock + "}";
     }
 
     private static String value(NebulaOptions options, int bit, String value) {

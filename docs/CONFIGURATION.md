@@ -19,3 +19,7 @@ fixed settings are available at the top of the screen.
 Every setting can be randomized independently. Random choices are resolved once
 when the app preview or DreamService starts. The saved selection remains Random
 and is resolved again the next time the scene starts.
+
+## Clock visibility
+
+`show_clock` is a boolean with default `false` and `random=false`. It is stored independently of randomized style fields. Explicit ON and OFF survive randomize-all and fixed-all. OFF suppresses all time, date and seconds text.

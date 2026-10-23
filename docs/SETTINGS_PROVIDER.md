@@ -12,8 +12,8 @@ The `get_schema` and `get_settings` methods return a `Bundle` containing a JSON
 string under the `json` key. `set_setting` takes the setting key as `arg` and a
 string `value` in the extras Bundle. Values must match the schema choices; an
 integer is clamped to its supported range. The `Random` value enables random
-selection for that one field. `set_random_all` and `set_random_none` toggle all
-field randomization at once.
+selection for that one field. `set_random_all` and `set_random_none` toggle randomized scene
+fields at once.
 
 The returned schema lists keys, types, defaults, supported values, and numeric
 ranges. Unknown methods and setting keys fail with `IllegalArgumentException`.
@@ -27,3 +27,5 @@ Example schema fragment:
 
 The settings UI reads the same persisted preferences. DreamService picks up
 changes on the next showing.
+
+`show_clock` accepts only `true` or `false`. Its schema default is `false` and `random=false`. It is returned as a JSON boolean. Bulk randomization preserves this independent visibility setting. Invalid values fail without changing the saved choice.
