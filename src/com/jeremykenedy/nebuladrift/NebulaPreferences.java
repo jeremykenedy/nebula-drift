@@ -49,7 +49,21 @@ final class NebulaPreferences {
                 .apply();
     }
 
+    boolean showClock() {
+        return preferences.getBoolean("show_clock", false);
+    }
+
+    void setShowClock(boolean visible) {
+        preferences.edit().putBoolean("show_clock", visible).apply();
+    }
+
     void set(String key, String value) {
+        if ("show_clock".equals(key)) {
+            if (!"true".equals(value) && !"false".equals(value))
+                throw new IllegalArgumentException("Clock visibility must be true or false");
+            setShowClock(Boolean.parseBoolean(value));
+            return;
+        }
         NebulaOptions old = read();
         int palette = old.palette;
         int form = old.form;

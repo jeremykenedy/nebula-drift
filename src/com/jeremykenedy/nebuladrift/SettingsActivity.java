@@ -52,7 +52,7 @@ public final class SettingsActivity extends Activity {
         title.setTextSize(28);
         title.setPadding(0, 0, 0, 14);
         rows.addView(title);
-        Button randomAll = button("Randomize all settings");
+        Button randomAll = button("Randomize scene settings");
         randomAll.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -119,6 +119,19 @@ public final class SettingsActivity extends Activity {
         Button[] settingButtons = new Button[KEYS.length];
         for (int i = 0; i < KEYS.length; i++)
             settingButtons[i] = addRow(i, active[i], (current.randomMask & RANDOM_BITS[i]) != 0);
+        android.widget.CheckBox clock = new android.widget.CheckBox(this);
+        clock.setText("Show clock");
+        clock.setTextSize(20);
+        clock.setChecked(preferences.showClock());
+        clock.setOnCheckedChangeListener(
+                new android.widget.CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(
+                            android.widget.CompoundButton button, boolean checked) {
+                        preferences.setShowClock(checked);
+                    }
+                });
+        rows.addView(clock);
         if (focusedRow >= 0 && focusedRow < settingButtons.length)
             settingButtons[focusedRow].requestFocus();
     }

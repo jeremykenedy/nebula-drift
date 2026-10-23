@@ -1,6 +1,7 @@
 package com.jeremykenedy.nebuladrift;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -117,7 +118,7 @@ public final class NebulaSettingsCoverageTest {
         JSONObject schema =
                 new JSONObject(provider.call("get_schema", null, null).getString("json"));
         assertEquals(1, schema.getInt("schemaVersion"));
-        assertEquals(8, schema.getJSONArray("fields").length());
+        assertEquals(9, schema.getJSONArray("fields").length());
         JSONObject settings =
                 new JSONObject(provider.call("get_settings", null, null).getString("json"));
         assertEquals("Violet", settings.getString("palette"));
@@ -196,5 +197,37 @@ public final class NebulaSettingsCoverageTest {
         assertEquals(255, preferences.read().randomMask);
         provider.call("set_random_none", null, null);
         assertEquals(0, preferences.read().randomMask);
+    }
+
+    @Test
+    public void clockVisibilityIsExplicitAndSurvivesBulkRandomization() throws Exception {
+        assertEquals(false, preferences.showClock());
+        JSONObject schema =
+                new JSONObject(provider.call("get_schema", null, null).getString("json"));
+        org.json.JSONArray fields = schema.getJSONArray("fields");
+        JSONObject clock = fields.getJSONObject(fields.length() - 1);
+        assertEquals("show_clock", clock.getString("key"));
+        assertFalse(clock.getBoolean("random"));
+        for (boolean visible : new boolean[] {true, false}) {
+            Bundle extras = new Bundle();
+            extras.putString("value", Boolean.toString(visible));
+            provider.call("set_setting", "show_clock", extras);
+            for (String method : new String[] {"set_random_all", "set_random_none"}) {
+                JSONObject saved =
+                        new JSONObject(provider.call(method, null, null).getString("json"));
+                assertEquals(visible, saved.getBoolean("show_clock"));
+                assertEquals(visible, preferences.showClock());
+            }
+        }
+        for (String invalid : new String[] {"random", "invalid", null}) {
+            Bundle extras = new Bundle();
+            extras.putString("value", invalid);
+            try {
+                provider.call("set_setting", "show_clock", extras);
+                fail("Invalid clock value must fail");
+            } catch (IllegalArgumentException expected) {
+                assertFalse(preferences.showClock());
+            }
+        }
     }
 }

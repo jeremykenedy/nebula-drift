@@ -25,3 +25,9 @@ Remaining device work includes D-pad confirmation on multiple remotes, automatic
 idle activation, returning from the dream, long-duration frame pacing and heat,
 and measured output resolution on a physical 4K set. Please share those results
 in an issue so the matrix can be updated with the exact model and software.
+
+## Optional clock regression, 2026-10-22
+
+An isolated Android TV emulator fixture compiled the production scene and provider classes from this change. The combined five-app run passed 123 actual Canvas/provider assertions. It checked the existing appearance default (OFF), explicit ON/OFF under scene randomization, portable boolean storage and schema, and invalid-write retention. OFF produced zero time/date/seconds text draws while the scene remained drawn. Actual 1920x1080 native GL captures also showed the clock ON and OFF above the same shader scene; preview Back/relaunch exercised pause/resume delegation.
+
+This isolated regression does not establish production DreamService binding, physical-TV performance or acceptance of the existing artwork. Signed release and both-TV installation gates remain pending.

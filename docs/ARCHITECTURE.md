@@ -17,3 +17,5 @@ The app preview and DreamService share the same renderer. The drawing surface
 uses the size supplied by Android; this project does not force a 4K buffer.
 Physical device frame pacing, thermal behavior, and native 4K composition still
 need measurements and are recorded in [verification](VERIFICATION.md).
+
+An optional transparent Canvas view sits above the GL surface for the local-time overlay. It defaults OFF, never participates in scene randomization, and invalidates only while visible and the scene is running. The scene container delegates pause and resume to the original GL surface.
