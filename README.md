@@ -15,7 +15,6 @@
     <a href="https://github.com/jeremykenedy/nebula-drift/actions/workflows/style.yml"><img src="https://github.com/jeremykenedy/nebula-drift/actions/workflows/style.yml/badge.svg?branch=main" alt="Code style"></a>
     <a href="https://github.com/jeremykenedy/nebula-drift/actions/workflows/docs.yml"><img src="https://github.com/jeremykenedy/nebula-drift/actions/workflows/docs.yml/badge.svg?branch=main" alt="Documentation checks"></a>
     <a href="https://github.com/jeremykenedy/nebula-drift/actions/workflows/security.yml"><img src="https://github.com/jeremykenedy/nebula-drift/actions/workflows/security.yml/badge.svg?branch=main" alt="Security checks"></a>
-    <a href="https://www.codefactor.io/repository/github/jeremykenedy/nebula-drift"><img src="https://www.codefactor.io/repository/github/jeremykenedy/nebula-drift/badge" alt="CodeFactor"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="Apache License 2.0"></a>
 </p>
 
